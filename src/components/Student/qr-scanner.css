@@ -1,0 +1,16 @@
+/* styles/qr-scanner.css */
+@layer components {
+  
+  
+    #qr-reader video {
+      /* Ensure video element isn't affected by Tailwind */
+      all: revert;
+    }
+  
+    #html5-qrcode-anchor-scan-type-change,
+    #html5-qrcode-button-camera-permission,
+    #html5-qrcode-button-camera-stop {
+      /* Button styles */
+      all: revert;
+    }
+  }
