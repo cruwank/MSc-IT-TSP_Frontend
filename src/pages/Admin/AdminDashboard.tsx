@@ -12,6 +12,7 @@ import { Input } from "../../components/ui/input"; // Import Input component
 import { motion } from "framer-motion";
 import {request} from "../../lib/apiManagerAdmin";
 import {saveAdminProfileToLocalStorage} from "../../lib/utils";
+import AppHeader from "../../components/appheader";
 
 const data = {
   "Artificial Intelligence": ["Deep Learning", "Neural Networks", "AI Ethics"],
@@ -175,22 +176,7 @@ export default function AdminDashboard() {
       <AppSidebar />
       <SidebarInset>
       <div className="border border-[var(--primary-border-color)] rounded-lg shadow-md xs:rounded-none xl:h-[calc(100vh-10px)] xl:overflow-hidden h-full">
-      <header className="flex h-16 shrink-0 items-center gap-2 shadow-md px-4 border-[var(--primary-border-color)] border-b">
-            <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="mr-2 h-4 bg-[var(--primary-border-color)]" />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">Admin</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage className="">Dashboard</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-            <span className="ml-auto font-medium text-gray-600">Hi! Admin</span>
-          </header>
+        <AppHeader name={"Dashboard"} subName={""}/>
           <div className="flex flex-1 flex-col gap-4 p-6 overflow-y-auto">
             <h2 className="text-2xl font-semibold uppercase  text-left">DASHBOARD</h2>
 

@@ -2,6 +2,8 @@ import { cn } from "../lib/utils"
 import { Button } from "../components/ui/button"
 import { Input } from "../components/ui/input"
 import { Label } from "../components/ui/label"
+import {useState} from "react";
+import {Eye, EyeOff} from "lucide-react";
 
 export function LoginForm({
                             login,
@@ -10,6 +12,17 @@ export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
+  const [password, setPasswordState] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [username, setUsernameState] = useState("");
+  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (/^[a-zA-Z0-9]*$/.test(value)) {
+      setUsernameState(value); // Update local state
+      setUsername(value); // Update parent state
+    }
+  };
+
   return (
     <form onSubmit={login}className={cn("flex flex-col gap-6 justify-center items-center", className)} {...props}>
       <div className="flex flex-col items-center gap-2 text-center">
@@ -21,19 +34,37 @@ export function LoginForm({
       <div className="grid gap-6">
         <div className="grid gap-3">
           <Label htmlFor="email">Username</Label>
-          <Input onChange={(e) => setUsername(e.target.value)} id="email" type="text" placeholder="username" required  className="max-w-[300px] min-w-[150px] w-100"/>
+          <Input  onChange={handleUsernameChange} value={username}  id="email" type="text" placeholder="username" required  className="max-w-[300px] min-w-[150px] w-100"/>
         </div>
-        <div className="grid gap-3">
+        <div className="grid gap-3 relative">
           <div className="flex items-center">
-            <Label htmlFor="password" >Password</Label>
-            <a
-              href="#"
-              className="ml-auto text-sm underline-offset-4 hover:underline"
-            >
+            <Label htmlFor="password">Password</Label>
+            <a href="#" className="ml-auto text-sm underline-offset-4 hover:underline">
               Forgot your password?
             </a>
           </div>
-          <Input onChange={(e) => setPassword(e.target.value)} id="password" type="password" placeholder="********" required />
+          <div className="relative">
+            <Input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="********"
+                required
+                className="w-full pr-10"
+                value={password}
+                onChange={(e) => {
+                  setPasswordState(e.target.value);
+                  setPassword(e.target.value);
+                }}
+            />
+            {/* Eye Icon Toggle Button */}
+            <button
+                type="button"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
+          </div>
         </div>
         <Button type="submit" variant='accent' className="w-full">
           Login

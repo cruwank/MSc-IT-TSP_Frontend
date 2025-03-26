@@ -6,6 +6,7 @@ import {saveAdminProfileToLocalStorage} from "../../lib/utils";
 import { useNavigate } from "react-router-dom";
 import * as React from "react";
 import letterE from "../../assets/letter-e.png";
+import logo from "../../assets/logo.png";
 import img1 from "../../assets/login-bg1.jpg";
 import img2 from "../../assets/login-bg2.jpg";
 import img3 from "../../assets/login-bg3.jpg";
@@ -66,12 +67,13 @@ export default function AdminLogin() {
       }else {
         hideLoader()
         console.log('err')
+        alert("Invalid username or password and try again");
       }
 
     } catch (error) {
       hideLoader()
       if (error instanceof Error) {
-        alert("An error occurred. Please username or password and try again");
+        alert("Invalid username or password and try again");
       }
     }
   };
@@ -95,12 +97,12 @@ export default function AdminLogin() {
         </motion.div>
       </div>
       <div className="flex flex-col gap-4 p-6 md:p-10">
-        <div className="flex justify-center gap-2 md:justify-start">
-          <a href="#" className="flex items-center gap-2 font-medium">
-            <div className="text-sidebar-primary-foreground flex aspect-square size-6 items-center justify-center rounded-lg">
-              <img src={letterE} alt="Sidebar Icon" />
+        <div className="flex justify-center gap-2 md:justify-start w-[300px]">
+          <a href="#" className="flex items-center font-medium">
+            <div className="flex w-[200px] items-center justify-center rounded-lg">
+              <img src={logo} alt="Sidebar Icon" className="w-[300px]" />
             </div>
-            E-Attendance
+            {/*E-Attendance*/}
           </a>
         </div>
         <div className="flex flex-1 items-center justify-center">

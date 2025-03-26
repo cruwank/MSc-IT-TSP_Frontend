@@ -8,6 +8,7 @@ import { Button } from "../../components/ui/button";
 import { Table, TableHead, TableHeader, TableRow, TableBody, TableCell } from "../../components/ui/table";
 import {request} from "../../lib/apiManagerAdmin";
 import { AddClassScheduleModal } from "../../components/Modals/AddClassSchedule";
+import AppHeader from "../../components/appheader";
 
 export default function AdminClassSchedule() {
 
@@ -83,29 +84,14 @@ export default function AdminClassSchedule() {
       <AppSidebar />
       <SidebarInset>
       <div className="border border-[var(--primary-border-color)] rounded-lg shadow-md xs:rounded-none">
-      <header className="flex h-16 shrink-0 items-center gap-2 shadow-md px-4 border-[var(--primary-border-color)] border-b">
-            <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="mr-2 h-4 bg-[var(--primary-border-color)]" />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">Programs</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Class Schedule</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-            <span className="ml-auto font-medium text-gray-600">Hi! Admin</span>
-          </header>
+        <AppHeader name={"Programs"} subName={"Class Schedule"}/>
 
           <div className="flex flex-1 flex-col p-6">
             <h2 className="text-2xl font-semibold flex justify-between items-center">
               <span>PROGRAMS - CLASS SCHEDULE</span>
-              <Button 
+              <Button
                 onClick={() => setIsAddModalOpen(true)}
-                className="bg-[var(--accent)] hover:bg-[var(--accent-dark)] text-white"
+                className="bg-[var(--accent)] hover:bg-gray-600 text-white"
               >
                 Add Class Schedule
               </Button>
@@ -173,7 +159,7 @@ export default function AdminClassSchedule() {
         </div>
 
         {isAddModalOpen && (
-          <AddClassScheduleModal 
+          <AddClassScheduleModal
             onClose={() => setIsAddModalOpen(false)}
             onSuccess={() => {
               setIsAddModalOpen(false);

@@ -14,7 +14,6 @@ import {
   Settings2,
   SquareTerminal,
 } from "lucide-react"
-
 import {
   Sidebar,
   SidebarContent,
@@ -28,6 +27,8 @@ import { NavMain } from "./nav-main"
 import { NavProjects } from "./nav-projects"
 import { NavSecondary } from "./nav-secondary"
 import { NavUser } from "./nav-user"
+import logo from "../assets/logo.png"
+
 export const UserContext = React.createContext(null);
 
 
@@ -82,16 +83,16 @@ const data = {
     },
   ],
   navSecondary: [
-    {
-      title: "Support",
-      url: "/admin/support",
-      icon: LifeBuoy,
-    },
-    {
-      title: "Feedback",
-      url: "/admin/feedback",
-      icon: Send,
-    },
+    // {
+    //   title: "Support",
+    //   url: "/admin/support",
+    //   icon: LifeBuoy,
+    // },
+    // {
+    //   title: "Feedback",
+    //   url: "/admin/feedback",
+    //   icon: Send,
+    // },
   ],
 }
 
@@ -102,14 +103,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <a href="/">
-                <div className="text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <img src="/src/assets/letter-e.png" alt="Sidebar Icon" />
+              <a href="#" className="w-[300px] flex items-center gap-2">
+                <div className=" w-[300px]  text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
+                  <img src={logo} alt="Sidebar Icon" />
                 </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">E-Attendance</span>
-                  {/* <span className="truncate text-xs">Enterprise</span> */}
-                </div>
+                {/*<div className="grid flex-1 text-left text-sm leading-tight">*/}
+                {/*  /!*<span className="truncate font-medium">E-Attendance</span>*!/*/}
+                {/*  /!* <span className="truncate text-xs">Enterprise</span> *!/*/}
+                {/*</div>*/}
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>

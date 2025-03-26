@@ -10,6 +10,10 @@ import { Input } from "../../components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "../../components/ui/select";
 import {request} from "../../lib/apiManagerAdmin";
 import StudentModal from "./Modal/StudentView";
+import {AddClassScheduleModal} from "../../components/Modals/AddClassSchedule";
+import {AddStudentModal} from "../../components/Modals/StudentAdd";
+import {EditStudentModal} from "../../components/Modals/StudentUpdate";
+import AppHeader from "../../components/appheader";
 
 const studentsData = [
   { name: "John Doe", id: "S001", mobile: "1234567890", email: "john@example.com" },
@@ -31,6 +35,9 @@ const coursesData = [
 ];
 
 export default function AdminStudents() {
+
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -137,6 +144,10 @@ export default function AdminStudents() {
     setStudentData(student);
     setShowModal(true)
   }
+  const setStudent=(student:any)=>{
+    setStudentData(student);
+    setIsEditModalOpen(true);
+  }
 
   return (
       <>{showModal && (
@@ -147,18 +158,7 @@ export default function AdminStudents() {
       <SidebarInset>
 
         <div className="border border-[var(--primary-border-color)] rounded-lg shadow-md xs:rounded-none">
-          <header className="flex h-16 shrink-0 items-center gap-2 shadow-md px-4 border-[var(--primary-border-color)] border-b">
-            <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="mr-2 h-4 bg-[var(--primary-border-color)]" />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">Students</BreadcrumbLink>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-            <span className="ml-auto font-medium text-gray-600">Welcome back, Admin!</span>
-          </header>
+          <AppHeader name={"Student"} subName={""}/>
 
           <div className="flex flex-1 flex-col px-6 py-8 space-y-4">
             <h2 className="text-2xl font-semibold  text-left">STUDENTS</h2>
@@ -205,7 +205,7 @@ export default function AdminStudents() {
 
               {/* Buttons */}
               <div className="flex gap-2">
-                <Button variant="accent">Add Student</Button>
+                <Button  onClick={() => setIsAddModalOpen(true)} variant="accent">Add Student</Button>
                 {/*<Button variant="secondary">Bulk Upload</Button>*/}
               </div>
             </div>
@@ -239,7 +239,7 @@ export default function AdminStudents() {
                         <TableCell className="space-y-1">
                           {/*<Button variant="link" size="sm" title="Reset student password">Reset Password</Button>*/}
                           <Button onClick={() =>loadStudent(student)} variant="link" size="sm">View</Button>
-                          <Button variant="link" size="sm">Edit</Button>
+                          <Button onClick={()=> setStudent(student)} variant="link" size="sm">Edit</Button>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -271,6 +271,27 @@ export default function AdminStudents() {
         </div>
       </SidebarInset>
     </SidebarProvider>
+
+        {isAddModalOpen && (
+            <AddStudentModal
+                onClose={() => setIsAddModalOpen(false)}
+                onSuccess={() => {
+                  setIsAddModalOpen(false);
+                  getStudents(); // Refresh the list
+                }}
+            />
+        )}
+
+        {isEditModalOpen && (
+            <EditStudentModal
+                student={studentData}
+                onClose={() => setIsEditModalOpen(false)}
+                onSuccess={() => {
+                  setIsEditModalOpen(false);
+                  getStudents(); // Refresh the list
+                }}
+            />
+        )}
       </>
   );
 }

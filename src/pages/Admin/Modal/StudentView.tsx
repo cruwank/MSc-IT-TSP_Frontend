@@ -44,7 +44,7 @@ const StudentModal: React.FC<ModalProps> = ({ student, onClose }) => {
                 <h2 className="text-xl font-semibold mb-4">Student Details</h2>
                 <p><strong>Name:</strong> {student.first_name} {student.last_name}</p>
                 <p><strong>Date of Birth:</strong> {student.date_of_birth}</p>
-                <p><strong>Gender:</strong> {student.gender}</p>
+                <p><strong>Gender:</strong> {student.gender=="F"?"Female":"Male"}</p>
                 <p><strong>Status:</strong> {student.status}</p>
                 <p><strong>Phone:</strong> {student.phone_number}</p>
                 <p><strong>Address:</strong> {student.address}</p>

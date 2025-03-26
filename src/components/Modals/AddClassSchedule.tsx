@@ -18,39 +18,35 @@ export function AddClassScheduleModal({ onClose, onSuccess }: AddClassScheduleMo
     endTime: "",
     classDate: ""
   });
-  const [courses, setCourses] = useState<any[]>([]);
-  const [subjects, setSubjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [subjectList, setSubjectList] =  useState<any | null>(null);
   const [selectedSubject, setSelectedSubject] =  useState<any | null>(null);
   const [batchList, setBatchList] =  useState<any | null>(null);
   const [selectedBatch, setSelectedBatch] =  useState<any | null>(null);
 
-
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
-      // const response = await request({
-      //   method: "post",
-      //   path: "/students/filter",
-      //   requestBody: {
-      //     subjectId: selectedSubject,
-      //     batchId: selectedBatch,
-      //     class_date: formData.classDate,
-      //     start_time: formData.startTime,
-      //     end_time: formData.endTime
-      //   },
-      // });
+      const response = await request({
+        method: "post",
+        path: "/class-schedule",
+        requestBody: {
+          subjectId: Number(selectedSubject),
+          batchId: Number(selectedBatch),
+          class_date: formData.classDate,
+          start_time: formData.startTime,
+          end_time: formData.endTime
+        },
+      });
       console.log(formData);
-      // const data = response.data;
-      // console.log(data);
-      // setStudentList(data.data)
-
+      setLoading(false);
+      onClose();
+      onSuccess();
     } catch (error) {
+      setLoading(false);
       if (error instanceof Error) {
-        alert("An error occurred. Please username or password and try again");
+        alert("An error occurred. Please try again ("+error.message+")");
       }
     }
   };
@@ -121,7 +117,7 @@ export function AddClassScheduleModal({ onClose, onSuccess }: AddClassScheduleMo
               {/*<h3 className="text-lg font-medium mb-2  text-left">Course Filter</h3>*/}
               <Select value={selectedSubject} onValueChange={setSelectedSubject}>
                 <SelectTrigger className="border border-[var(--primary-border-color)] rounded-lg p-3 elevation-1 hover:elevation-2 transition-all duration-300">
-                  {selectedBatch && batchList?.length > 0
+                  {selectedSubject && batchList?.length > 0
                       ? subjectList.find(b => b.id == selectedSubject)?.subject_name || "Select Module"
                       : "Select Module"}
                 </SelectTrigger>
@@ -158,8 +154,8 @@ export function AddClassScheduleModal({ onClose, onSuccess }: AddClassScheduleMo
               <Input
                 id="startDate"
                 type="time"
-                value={formData.startDate}
-                onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                value={formData.startTime}
+                onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
                 required
               />
             </div>
@@ -169,8 +165,8 @@ export function AddClassScheduleModal({ onClose, onSuccess }: AddClassScheduleMo
               <Input
                 id="endDate"
                 type="time"
-                value={formData.endDate}
-                onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                value={formData.endTime}
+                onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
                 required
               />
             </div>
@@ -181,8 +177,8 @@ export function AddClassScheduleModal({ onClose, onSuccess }: AddClassScheduleMo
             <Input
               id="classTime"
               type="date"
-              value={formData.classTime}
-              onChange={(e) => setFormData({ ...formData, classTime: e.target.value })}
+              value={formData.classDate}
+              onChange={(e) => setFormData({ ...formData, classDate: e.target.value })}
               required
             />
           </div>
@@ -198,7 +194,7 @@ export function AddClassScheduleModal({ onClose, onSuccess }: AddClassScheduleMo
             </Button>
             <Button
               type="submit"
-              className="bg-[var(--accent)] hover:bg-[var(--accent-dark)]"
+              className="bg-[var(--accent)]  hover:bg-gray-600"
               disabled={loading}
             >
               {loading ? "Adding..." : "Add Schedule"}

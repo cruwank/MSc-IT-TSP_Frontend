@@ -8,6 +8,7 @@ import { Table, TableHead, TableHeader, TableRow, TableBody, TableCell } from ".
 import { Select, SelectTrigger, SelectContent, SelectItem } from "../../components/ui/select";
 import { Input } from "../../components/ui/input";
 import {request} from "../../lib/apiManagerAdmin";
+import AppHeader from "../../components/appheader";
 
 // Dummy Data for API Simulation
 const data = {
@@ -41,6 +42,7 @@ export default function AdminAttendance() {
     const [attendanceList, setAttendanceList] = useState<any | null>(null);
     const [filteredData, setFilteredData] = useState(attendanceData);
     const [searchTerm, setSearchTerm] = useState<string>("");
+    const [date, setDate] = useState<string>("");
 
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
@@ -63,7 +65,7 @@ export default function AdminAttendance() {
         // );
         // setFilteredData(filtered);
         getAttendance();
-    }, [selectedCourse, selectedSubject, searchTerm]);
+    }, [selectedCourse, selectedSubject, searchTerm, date]);
 
     // useEffect(() => {
     //     setModules(selectedCourse === "all" ? allModules : data[selectedCourse] || []);
@@ -120,6 +122,7 @@ export default function AdminAttendance() {
                     courseId: selectedCourse?.id,
                     subjectId: selectedSubject?.id,
                     value: searchTerm,
+                    date: date,
                     page: page,
                     limit: 10
                 },
@@ -141,22 +144,7 @@ export default function AdminAttendance() {
             <AppSidebar />
             <SidebarInset>
             <div className="border border-[var(--primary-border-color)] rounded-lg shadow-md xs:rounded-none xl:h-[calc(100vh-10px)] xl:overflow-hidden h-full">
-            <header className="flex h-16 shrink-0 items-center gap-2 shadow-md px-4 border-[var(--primary-border-color)] border-b">
-                        <SidebarTrigger className="-ml-1" />
-                        <Separator orientation="vertical" className="mr-2 h-4 bg-[var(--primary-border-color)]" />
-                        <Breadcrumb>
-                            <BreadcrumbList>
-                                <BreadcrumbItem className="hidden md:block">
-                                    <BreadcrumbLink href="#">Admin</BreadcrumbLink>
-                                </BreadcrumbItem>
-                                <BreadcrumbSeparator className="hidden md:block" />
-                                <BreadcrumbItem>
-                                    <BreadcrumbPage>Attendance Management</BreadcrumbPage>
-                                </BreadcrumbItem>
-                            </BreadcrumbList>
-                        </Breadcrumb>
-                        <span className="ml-auto font-medium text-gray-600">Hi! Admin</span>
-                    </header>
+                <AppHeader name={"Attendance"} subName={""}/>
 
                     <div className="flex flex-1 flex-col gap-4 p-6 overflow-y-auto">
                         <h2 className="text-2xl font-semibold uppercase  text-left">Attendance Management</h2>
@@ -194,6 +182,16 @@ export default function AdminAttendance() {
                                 </div>
                             )}
 
+                            <div className="flex  flex-wrap">
+                                <h3 className="text-lg font-medium mb-2 text-left">Date</h3>
+                                <Input
+                                    type="date"
+                                    placeholder="Search by Course, Module, or Instructor"
+                                    className="border border-[var(--primary-border-color)] rounded-lg elevation-1 hover:elevation-2 transition-all min-w-[150px] "
+                                    value={date}
+                                    onChange={(e) => setDate(e.target.value)}
+                                />
+                            </div>
                             <div className="flex-0 min-w-[250px] w-full">
                                 <h3 className="text-lg font-medium mb-2 text-left">Search</h3>
                                 <Input
@@ -217,18 +215,20 @@ export default function AdminAttendance() {
                                 <Table className=" border-collapse w-full">
                                     <TableHeader className="color-[var(--primary-border-color)]">
                                         <TableRow>
+                                            <TableHead>Attendance Date</TableHead>
+                                            <TableHead>Student Name</TableHead>
                                             <TableHead>Course</TableHead>
                                             <TableHead>Module</TableHead>
-                                            <TableHead>Attendance Date</TableHead>
                                             <TableHead>Instructor</TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
                                         {attendanceList?.map((row, index) => (
                                             <TableRow key={index} className="hover:bg-gray-100">
+                                                <TableCell>{row.created_datetime.split('T')[0]}</TableCell>
+                                                <TableCell>{row.student.first_name} {row.student.last_name}</TableCell>
                                                 <TableCell>{row.schedule?.batch?.course.course_name}</TableCell>
                                                 <TableCell>{row.schedule.subject.subject_name}</TableCell>
-                                                <TableCell>{row.created_datetime.split('T')[0]}</TableCell>
                                                 <TableCell>{row.schedule.subject.teacher.first_name} {row.schedule.subject.teacher.last_name}</TableCell>
                                             </TableRow>
                                         ))}

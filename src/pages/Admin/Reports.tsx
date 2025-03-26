@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "../../components/ui/breadcrumb";
 import { Separator } from "../../components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "../../components/ui/sidebar";
@@ -13,6 +13,11 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "../../components/ui/form";
 import { Button } from "../../components/ui/button";
+import {request} from "../../lib/apiManagerAdmin";
+import {Select, SelectContent, SelectItem, SelectTrigger} from "../../components/ui/select";
+import {motion} from "framer-motion";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "../../components/ui/table";
+import AppHeader from "../../components/appheader";
 
 
 
@@ -40,21 +45,88 @@ export function Reports() {
         path: ["confirmPassword"]
     });
 
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-            name: "",
-            email: "",
-            mobile: "",
-            newPassword: "",
-            confirmPassword: ""
-        },
-    });
+    const [page, setPage] = useState(1);
+    const [counts, setCounts] = useState(null);
+    const [subjectList, setSubjectList] =  useState<any | null>(null);
+    const [selectedSubject, setSelectedSubject] =  useState<any | null>(null);
+    const [courseList, setCourseList] = useState<any | null>(null);
+    const [selectedCourse, setSelectedCourse] = useState<any | null>(null);
+    const [attendanceList, setAttendanceList] = useState<any | null>(null);
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values);
+
+    const [searchTerm, setSearchTerm] = useState<string>("");
+    const [date, setDate] = useState<string>("");
+
+
+    useEffect(() => {
+        getCourses();
+        getSubjects();
+    }, []);
+    const getCourses = async () => {
+        try {
+            const response = await request({
+                method: "get",
+                path: "/courses",
+                requestBody: {
+                },
+            });
+            console.log(response);
+            const data = response.data;
+            console.log(data);
+            setCourseList(data)
+
+        } catch (error) {
+            if (error instanceof Error) {
+                alert("An error occurred. Please username or password and try again");
+            }
+        }
+    };
+    const getSubjects = async () => {
+        try {
+            const response = await request({
+                method: "get",
+                path: "/subjects",
+                requestBody: {
+                },
+            });
+            console.log(response);
+            const data = response.data;
+            console.log(data);
+            setSubjectList(data)
+
+        } catch (error) {
+            if (error instanceof Error) {
+                alert("An error occurred. Please username or password and try again");
+            }
+        }
+    };
+
+    const download = async () => {
+
+        const response = await request({
+            method: "post",
+            path: "/attendance/filter/report",
+            requestBody: {
+                courseId: selectedCourse?.id,
+                subjectId: selectedSubject?.id,
+                value: searchTerm,
+                date: date
+            },
+        });
+        const blob = new Blob([response], {
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        });
+
+        // Create a link element
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'attendance.csv'); // Set download filename
+        document.body.appendChild(link);
+        link.click(); // Trigger download
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
     }
-
 
 
     return (
@@ -62,43 +134,77 @@ export function Reports() {
             <AppSidebar />
             <SidebarInset>
                 <div className="border border-[var(--primary-border-color)] rounded-lg shadow-md xs:rounded-none">
-                    <header className="flex h-16 shrink-0 items-center gap-2 shadow-md px-4 border-[var(--primary-border-color)] border-b">
-                                <SidebarTrigger className="-ml-1" />
-                                <Separator orientation="vertical" className="mr-2 h-4 bg-[var(--primary-border-color)]" />
-                                <Breadcrumb>
-                                  <BreadcrumbList>
-                                    <BreadcrumbItem className="hidden md:block">
-                                      <BreadcrumbLink href="#">Programs</BreadcrumbLink>
-                                    </BreadcrumbItem>
-                                    <BreadcrumbSeparator className="hidden md:block" />
-                                    <BreadcrumbItem>
-                                      <BreadcrumbPage>Course</BreadcrumbPage>
-                                    </BreadcrumbItem>
-                                  </BreadcrumbList>
-                                </Breadcrumb>
-                                <span className="ml-auto font-medium text-gray-600">Hi! Admin</span>
-                              </header>
-                    <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-                        <div className="flex flex-col gap-6 p-6">
-                            <h2 className="text-xl font-semibold uppercase">PROFILE</h2>
-                        </div>
-                        {/* code goes hrer */}
+                    <AppHeader name={"Reports"} subName={""}/>
+                    <div className="flex flex-1 flex-col gap-4 pt-0">
 
+                        <div className="flex flex-1 flex-col gap-4 p-6 overflow-y-auto">
+                            <h2 className="text-2xl font-semibold text-left">Attendance Report Download</h2>
 
-                        <div className="flex space-x-[5%]">
-                            <Input
-                                disabled
-                                placeholder="Reports"
-                                className="border rounded-md p-2 w-1/2 border-[var(--primary-border-color)]"
-                            />
+                            <div className="flex gap-4  flex-wrap">
+                                <div>
+                                    <h3 className="text-lg font-medium mb-2  text-left">Course Filter</h3>
+                                    <Select value={selectedCourse} onValueChange={setSelectedCourse}>
+                                        <SelectTrigger className="border border-[var(--primary-border-color)] rounded-lg p-3 elevation-1 hover:elevation-2 transition-all duration-300">
+                                            {selectedCourse == null ? "Select Course" : selectedCourse.course_name}
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value={null}>All Courses</SelectItem>
+                                            {courseList?.map(course => (
+                                                <SelectItem key={course.id} value={course}>{course.course_name}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
 
+                                {selectedCourse !== null && (
+                                    <div>
+                                        <h3 className="text-lg font-medium mb-2 text-left">Module Filter</h3>
+                                        <Select value={selectedSubject} onValueChange={setSelectedSubject}>
+                                            <SelectTrigger className="border border-[var(--primary-border-color)] rounded-lg p-3 elevation-1 hover:elevation-2 transition-all duration-300">
+                                                {selectedSubject === null ? "Select Module" : selectedSubject.subject_name}
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value={null}>All Modules</SelectItem>
+                                                {subjectList?.map((module) => (
+                                                    <SelectItem key={module.id} value={module}>{module.subject_name}</SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                )}
 
+                                <div className="flex  flex-wrap">
+                                    <h3 className="text-lg font-medium mb-2 text-left">Date</h3>
+                                    <Input
+                                        type="date"
+                                        placeholder="Search by Course, Module, or Instructor"
+                                        className="border border-[var(--primary-border-color)] rounded-lg elevation-1 hover:elevation-2 transition-all min-w-[150px] "
+                                        value={date}
+                                        onChange={(e) => setDate(e.target.value)}
+                                    />
+                                </div>
+                                <div className="flex-0 min-w-[250px] w-full">
+                                    <h3 className="text-lg font-medium mb-2 text-left">Search</h3>
+                                    <Input
+                                        type="text"
+                                        placeholder="Search by Course, Module, or Instructor"
+                                        className="border border-[var(--primary-border-color)] rounded-lg p-3 elevation-1 hover:elevation-2 transition-all duration-300 min-w-[200px] sm:min-w-100 w-full"
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="flex gap-4  pt-3 flex-wrap">
                             <Button
+                                onClick={download}
                                 type="submit"
-                               variant="accent"
+                                variant="accent"
                             >
                                 Download
                             </Button>
+                            </div>
+
                         </div>
 
 
